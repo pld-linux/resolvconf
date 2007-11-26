@@ -1,0 +1,106 @@
+#!/bin/sh
+#
+# resolvconf  --  Nameserver information manager
+#
+# This script is part of the resolvconf package
+# See /usr/share/doc/resolvconf/copyright
+
+# Don't use set -e; check return status instead
+
+[ -x /sbin/resolvconf ] || exit 0
+
+MYNAME="${0##*/}"
+PATH=/sbin:/bin
+RUN_DIR=/etc/resolvconf/run
+IFACE_DIR="${RUN_DIR}/interface"
+RESOLVCONF_FILE="${RUN_DIR}/resolv.conf"
+ENABLE_UPDATES_FLAGFILE="${RUN_DIR}/enable-updates"
+
+. /lib/lsb/init-functions
+
+# $1 EXITSTATUS
+# [$2 MESSAGE]
+log_action_end_msg_and_exit()
+{
+	log_action_end_msg "$1" ${2:+"$2"}
+	exit $1
+}
+
+update()
+{
+	[ -e "$ENABLE_UPDATES_FLAGFILE" ] || return 0
+	cd "$IFACE_DIR"
+	# "update" scripts must assume that interface files are in the PWD
+	run-parts ${1:+--arg="$1"} ${2:+--arg="$2"} /etc/resolvconf/update.d
+}
+
+enable_updates()
+{
+	: >| "$ENABLE_UPDATES_FLAGFILE"
+}
+
+disable_updates()
+{
+	rm -f "$ENABLE_UPDATES_FLAGFILE"
+}
+
+case "$1" in
+start)
+	# The "start" method should _only_ be used at boot time.
+	# If you want to update the resolv.conf file then use "reload".
+	# On package upgrade, don't run this.
+	log_action_begin_msg "Setting up resolvconf"
+	umask 022
+	if [ ! -d "$RUN_DIR" ] ; then
+		[ -L "$RUN_DIR" ] || log_action_end_msg_and_exit 1 "$RUN_DIR is neither a directory nor a symbolic link"
+		# Target of symlink is not a dir
+		{ RUN_CANONICALDIR="$(readlink -f "$RUN_DIR")" && [ "$RUN_CANONICALDIR" ] ; } || log_action_end_msg_and_exit 1 "canonical path of the run directory could not be determined"
+		# Create directory at the target
+		mkdir "$RUN_CANONICALDIR" || log_action_end_msg_and_exit 1 "error creating directory $RUN_CANONICALDIR"
+	fi
+	# The run directory exists
+
+	if [ -d "${RUN_DIR}/interface" ] ; then
+		rm -f ${RUN_DIR}/interface/*
+	else
+		mkdir "${RUN_DIR}/interface" || log_action_end_msg_and_exit 1 "error creating directory ${RUN_DIR}/interface"
+	fi
+	# The interface directory exists
+
+	enable_updates || log_action_end_msg_and_exit 1 "could not enable updates"
+	update -i
+	log_action_end_msg_and_exit "$?"
+	;;
+stop)
+	# The "stop" method should only be used at shutdown time.
+	log_action_begin_msg "Stopping resolvconf"
+	disable_updates
+	log_action_end_msg_and_exit "$?"
+	;;
+restart)
+	log_action_begin_msg "Restarting resolvconf"
+	[ -d "${RUN_DIR}/interface" ] || log_action_end_msg_and_exit 1 "${RUN_DIR}/interface is not a directory"
+	enable_updates || log_action_end_msg_and_exit 1 "could not enabling updates"
+	update
+	log_action_end_msg_and_exit "$?"
+	;;
+reload|force-reload)
+	# Do it silently
+	[ -d "${RUN_DIR}/interface" ] || { log_failure_msg "${RUN_DIR}/interface is not a directory" ; exit 1 ; }
+	update
+	exit $?
+	;;
+enable-updates)
+	enable_updates
+	exit $?
+	;;
+disable-updates)
+	disable_updates
+	exit $?
+	;;
+*)
+	echo "Usage: /etc/init.d/resolvconf {start|stop|reload|restart|force-reload|enable-updates|disable-updates}" >&2
+	exit 3
+	;;
+esac
+
