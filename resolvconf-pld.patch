@@ -1,0 +1,34 @@
+--- ./etc/resolvconf/update.d/dnscache	2007-11-27 01:18:16.000000000 +0200
++++ ./etc/resolvconf/update.d/dnscache	2006-07-28 18:05:55.000000000 +0300
+@@ -94,11 +94,11 @@
+ fi
+ 
+ # svc is the daemontools service controller
+-SVC_CMD="$(which svc)" || :
++SVC_CMD="$(which svc 2>/dev/null)" || :
+ [ ! "$SVC_CMD" ] && [ -x /command/svc ] && SVC_CMD=/command/svc
+ 
+ # sv is the runit service controller
+-SV_CMD="$(which sv)" || :
++SV_CMD="$(which sv 2>/dev/null)" || :
+ 
+ for CACHE in $CACHES ; do
+ 	cp "$TMPFILE" "$CACHE/root/servers/@"
+--- ./etc/resolvconf/update.d/libc	2007-11-27 01:17:28.000000000 +0200
++++ ./etc/resolvconf/update.d/libc	2007-11-27 01:36:43.219430900 +0200
+@@ -147,5 +147,5 @@
+ fi
+ 
+ # Notify users of the resolver
+-exec run-parts ${NSCD_RESTARTED:+--arg="--nscd"} "${ETCRESOLVCONF}/update-libc.d"
++exec run-parts "${ETCRESOLVCONF}/update-libc.d" "--nscd"
+ 
+--- ./bin/resolvconf	2006-03-08 19:03:13.000000000 +0200
++++ ./bin/resolvconf	2007-11-27 01:18:11.000000000 +0200
+@@ -92,5 +92,4 @@
+ 
+ [ -e "$ENABLE_UPDATES_FLAGFILE" ] || exit 0
+ 
+-exec run-parts "--arg=$CMD" ${IFACE:+--arg="$IFACE"} /etc/resolvconf/update.d
+-
++exec run-parts /etc/resolvconf/update.d "$CMD" ${IFACE:+"$IFACE"} 
