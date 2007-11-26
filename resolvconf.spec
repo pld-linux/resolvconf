@@ -25,10 +25,10 @@ iconv -fKOI8R -tutf8 < man/resolvconf.ru.8  > man/resolvconf.ru-utf8.8
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sysconfdir},%{_libdir},%{_sbindir},%{_mandir}/{ru/,}man{5,8}}
+install -d $RPM_BUILD_ROOT{%{_sysconfdir},%{_libdir}/%{name},%{_sbindir},%{_mandir}/{ru/,}man{5,8}}
 cp -a etc/* $RPM_BUILD_ROOT%{_sysconfdir}
 install bin/resolvconf $RPM_BUILD_ROOT%{_sbindir}
-install bin/list-records $RPM_BUILD_ROOT%{_libdir}/resolvconf
+install bin/list-records $RPM_BUILD_ROOT%{_libdir}/%{name}
 cp -a man/interface-order.5 $RPM_BUILD_ROOT%{_mandir}/man5
 cp -a man/resolvconf.8 $RPM_BUILD_ROOT%{_mandir}/man8
 cp -a man/interface-order.ru-utf8.5 $RPM_BUILD_ROOT%{_mandir}/ru/man5/interface-order.5
@@ -40,8 +40,9 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc README
-%attr(755,root,root) %{_libdir}/resolvconf
 %attr(755,root,root) %{_sbindir}/resolvconf
+%dir %{_libdir}/resolvconf
+%attr(755,root,root) %{_libdir}/resolvconf/list-records
 %dir %{_sysconfdir}/resolvconf
 %dir %{_sysconfdir}/resolvconf/resolv.conf.d
 %dir %{_sysconfdir}/resolvconf/update.d
