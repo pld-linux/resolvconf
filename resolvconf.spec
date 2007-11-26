@@ -6,6 +6,7 @@ License:	GPL v2
 Group:		Applications
 Source0:	ftp://ftp.debian.org/debian/pool/main/r/resolvconf/%{name}_%{version}.tar.gz
 # Source0-md5:	d6aec9e204674de97b272384305eb320
+Requires:	rc-scripts
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
