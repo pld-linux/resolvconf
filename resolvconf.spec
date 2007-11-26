@@ -19,13 +19,19 @@ information and applications that need nameserver information.
 
 %prep
 %setup -q
+iconv -fKOI8R -tutf8 < man/interface-order.ru.5 > man/interface-order.ru-utf8.5
+iconv -fKOI8R -tutf8 < man/resolvconf.ru.8  > man/resolvconf.ru-utf8.8
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sysconfdir},%{_libdir},%{_sbindir}}
+install -d $RPM_BUILD_ROOT{%{_sysconfdir},%{_libdir},%{_sbindir},%{_mandir}/{ru/,}man{5,8}}
 cp -a etc/* $RPM_BUILD_ROOT%{_sysconfdir}
 install bin/resolvconf $RPM_BUILD_ROOT%{_sbindir}
 install bin/list-records $RPM_BUILD_ROOT%{_libdir}/resolvconf
+cp -a man/interface-order.5 $RPM_BUILD_ROOT%{_mandir}/man5
+cp -a man/resolvconf.8 $RPM_BUILD_ROOT%{_mandir}/man8
+cp -a man/interface-order.ru-utf8.5 $RPM_BUILD_ROOT%{_mandir}/ru/man5/interface-order.5
+cp -a man/resolvconf.ru-utf8.8 $RPM_BUILD_ROOT%{_mandir}/ru/man8/resolvconf.8
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -44,3 +50,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/resolvconf/update.d/bind
 %{_sysconfdir}/resolvconf/update.d/dnscache
 %{_sysconfdir}/resolvconf/update.d/libc
+%{_mandir}/man5/interface-order.5*
+%{_mandir}/man8/resolvconf.8*
+%lang(ru) %{_mandir}/ru/man5/interface-order.5*
+%lang(ru) %{_mandir}/ru/man8/resolvconf.8*
