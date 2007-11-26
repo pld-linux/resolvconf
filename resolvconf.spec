@@ -25,8 +25,8 @@ iconv -fKOI8R -tutf8 < man/resolvconf.ru.8  > man/resolvconf.ru-utf8.8
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sysconfdir},%{_libdir}/%{name},%{_sbindir},%{_mandir}/{ru/,}man{5,8}}
-cp -a etc/* $RPM_BUILD_ROOT%{_sysconfdir}
+install -d $RPM_BUILD_ROOT{%{_sysconfdir}/%{name}/run,%{_libdir}/%{name},%{_sbindir},%{_mandir}/{ru/,}man{5,8}}
+cp -a etc/%{name}/* $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 install bin/resolvconf $RPM_BUILD_ROOT%{_sbindir}
 install bin/list-records $RPM_BUILD_ROOT%{_libdir}/%{name}
 cp -a man/interface-order.5 $RPM_BUILD_ROOT%{_mandir}/man5
@@ -43,15 +43,16 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_sbindir}/resolvconf
 %dir %{_libdir}/resolvconf
 %attr(755,root,root) %{_libdir}/resolvconf/list-records
-%dir %{_sysconfdir}/resolvconf
-%dir %{_sysconfdir}/resolvconf/resolv.conf.d
-%dir %{_sysconfdir}/resolvconf/update.d
-%{_sysconfdir}/resolvconf/interface-order
-%{_sysconfdir}/resolvconf/resolv.conf.d/base
-%{_sysconfdir}/resolvconf/resolv.conf.d/head
-%{_sysconfdir}/resolvconf/update.d/bind
-%{_sysconfdir}/resolvconf/update.d/dnscache
-%{_sysconfdir}/resolvconf/update.d/libc
+%dir %{_sysconfdir}/%{name}
+%dir %{_sysconfdir}/%{name}/resolv.conf.d
+%dir %{_sysconfdir}/%{name}/update.d
+%dir %{_sysconfdir}/%{name}/run
+%{_sysconfdir}/%{name}/interface-order
+%{_sysconfdir}/%{name}/resolv.conf.d/base
+%{_sysconfdir}/%{name}/resolv.conf.d/head
+%{_sysconfdir}/%{name}/update.d/bind
+%{_sysconfdir}/%{name}/update.d/dnscache
+%{_sysconfdir}/%{name}/update.d/libc
 %{_mandir}/man5/interface-order.5*
 %{_mandir}/man8/resolvconf.8*
 %lang(ru) %{_mandir}/ru/man5/interface-order.5*
