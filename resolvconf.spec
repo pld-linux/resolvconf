@@ -1,7 +1,7 @@
 Summary:	nameserver information handler
 Name:		resolvconf
 Version:	1.37
-Release:	0.6
+Release:	0.7
 License:	GPL v2
 Group:		Applications
 Source0:	ftp://ftp.debian.org/debian/pool/main/r/resolvconf/%{name}_%{version}.tar.gz
@@ -58,10 +58,10 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_sysconfdir}/%{name}/update.d
 %dir %{_sysconfdir}/%{name}/update-libc.d
 %dir %{_sysconfdir}/%{name}/run
-%{_sysconfdir}/%{name}/interface-order
-%{_sysconfdir}/%{name}/resolv.conf.d/base
-%{_sysconfdir}/%{name}/resolv.conf.d/head
-%{_sysconfdir}/%{name}/resolv.conf.d/tail
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/interface-order
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/resolv.conf.d/base
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/resolv.conf.d/head
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/resolv.conf.d/tail
 %attr(755,root,root) %{_sysconfdir}/%{name}/update.d/bind
 %attr(755,root,root) %{_sysconfdir}/%{name}/update.d/dnscache
 %attr(755,root,root) %{_sysconfdir}/%{name}/update.d/libc
