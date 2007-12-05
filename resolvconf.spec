@@ -1,7 +1,7 @@
 Summary:	nameserver information handler
 Name:		resolvconf
 Version:	1.37
-Release:	0.7
+Release:	1
 License:	GPL v2
 Group:		Applications
 Source0:	ftp://ftp.debian.org/debian/pool/main/r/resolvconf/%{name}_%{version}.tar.gz
