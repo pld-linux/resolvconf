@@ -17,29 +17,18 @@ ENABLE_UPDATES_FLAGFILE="${RUN_DIR}/enable-updates"
 
 . /etc/rc.d/init.d/functions
 
-# $1 EXITSTATUS
-# [$2 MESSAGE]
-log_action_end_msg_and_exit()
-{
-	echo ${2:+"$2"}
-	exit $1
-}
-
-update()
-{
+update() {
 	[ -e "$ENABLE_UPDATES_FLAGFILE" ] || return 0
 	cd "$IFACE_DIR"
 	# "update" scripts must assume that interface files are in the PWD
 	run-parts /etc/resolvconf/update.d "$@"
 }
 
-enable_updates()
-{
-	: >| "$ENABLE_UPDATES_FLAGFILE"
+enable_updates() {
+	: > "$ENABLE_UPDATES_FLAGFILE"
 }
 
-disable_updates()
-{
+disable_updates() {
 	rm -f "$ENABLE_UPDATES_FLAGFILE"
 }
 
@@ -52,55 +41,87 @@ start)
 	umask 022
 	if [ ! -d "$RUN_DIR" ] ; then
 		if [ ! -L "$RUN_DIR" ]; then
-			log_action_end_msg_and_exit 1 "$RUN_DIR is neither a directory nor a symbolic link"
+			fail
+			show "$RUN_DIR is neither a directory nor a symbolic link"
+			exit 1
 		fi
 		# Target of symlink is not a dir
 		RUN_CANONICALDIR=$(readlink -f "$RUN_DIR")i
 		if [ -z "$RUN_CANONICALDIR" ]; then
-			log_action_end_msg_and_exit 1 "canonical path of the run directory could not be determined"
+			fail
+			show "canonical path of the run directory could not be determined"
+			exit 1
 		fi
 		# Create directory at the target
 		if ! mkdir "$RUN_CANONICALDIR"; then
-		   	log_action_end_msg_and_exit 1 "error creating directory $RUN_CANONICALDIR"
+			fail
+		   	show "error creating directory $RUN_CANONICALDIR"
+			exit 1
 		fi
 	fi
-	# The run directory exists
 
+	# The run directory exists
 	if [ -d "${RUN_DIR}/interface" ] ; then
 		rm -f ${RUN_DIR}/interface/*
 	else
 		if ! mkdir "${RUN_DIR}/interface"; then
-		   	log_action_end_msg_and_exit 1 "error creating directory ${RUN_DIR}/interface"
+			fail
+			show "error creating directory ${RUN_DIR}/interface"
+			exit 1
 		fi
 	fi
 	# The interface directory exists
 
 	if ! enable_updates; then
-	   	log_action_end_msg_and_exit 1 "could not enable updates"
+		fail
+		show "could not enable updates"
+		exit 1
 	fi
 	update -i
-	log_action_end_msg_and_exit "$?"
+	RETVAL=$?
+	if [ $RETVAL = 0 ]; then
+		ok
+	else
+		fail
+	fi
 	;;
 stop)
 	# The "stop" method should only be used at shutdown time.
 	show "Stopping resolvconf"
 	disable_updates
-	log_action_end_msg_and_exit "$?"
+	RETVAL=$?
+	if [ $RETVAL = 0 ]; then
+		ok
+	else
+		fail
+	fi
 	;;
 restart)
 	show "Restarting resolvconf"
 	if [ ! -d "${RUN_DIR}/interface" ]; then
-	   	log_action_end_msg_and_exit 1 "${RUN_DIR}/interface is not a directory"
+		fail
+	   	show "${RUN_DIR}/interface is not a directory"
+		exit 1
 	fi
 	if ! enable_updates; then
-		log_action_end_msg_and_exit 1 "could not enabling updates"
+		fail
+		show "could not enabling updates"
+		exit 1
 	fi
 	update
-	log_action_end_msg_and_exit "$?"
+	RETVAL=$?
+	if [ $RETVAL = 0 ]; then
+		ok
+	else
+		fail
+	fi
 	;;
 reload|force-reload)
 	# Do it silently
-	[ -d "${RUN_DIR}/interface" ] || { log_failure_msg "${RUN_DIR}/interface is not a directory" ; exit 1 ; }
+	if [ ! -d "${RUN_DIR}/interface" ]; then
+		show "${RUN_DIR}/interface is not a directory"
+	   	exit 1
+	fi
 	update
 	exit $?
 	;;
