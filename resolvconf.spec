@@ -1,4 +1,5 @@
-Summary:	nameserver information handler
+Summary:	Nameserver information handler
+Summary(pl.UTF-8):	Program obsługujący informacje o serwerach nazw
 Name:		resolvconf
 Version:	1.37
 Release:	2
@@ -20,6 +21,12 @@ information about currently available nameservers. It sets itself up
 as the intermediary between programs that supply nameserver
 information and programs that use nameserver information.
 
+%description -l pl.UTF-8
+resolvconf to narzędzie do śledzenia informacji systemu o aktualnie
+dostępnych serwerach nazw. Program wstawia się jako pośrednik między
+programami dostarczającymi informacje o serwerach nazw a programami
+wykorzystującymi te informacje.
+
 %prep
 %setup -q
 %patch0 -p1
@@ -34,6 +41,7 @@ find . '(' -name '*~' -o -name '*.orig' ')' -print0 | xargs -0 -r -l512 rm -f
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{/etc/rc.d/init.d,%{_sysconfdir}/%{name}/run,%{_libdir}/%{name},%{_sbindir},%{_mandir}/{ru/,}man{5,8}}
+
 cp -a etc/%{name}/* $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 install bin/resolvconf $RPM_BUILD_ROOT%{_sbindir}
 install bin/list-records $RPM_BUILD_ROOT%{_libdir}/%{name}
