@@ -2,9 +2,9 @@ Summary:	Nameserver information handler
 Summary(pl.UTF-8):	Program obsługujący informacje o serwerach nazw
 Name:		resolvconf
 Version:	1.42
-Release:	1
+Release:	2
 License:	GPL v2
-Group:		Applications
+Group:		Base
 Source0:	ftp://ftp.debian.org/debian/pool/main/r/resolvconf/%{name}_%{version}.tar.gz
 # Source0-md5:	205919a6754c93f61c76cd8f851c81b3
 Source1:	%{name}.init
@@ -14,6 +14,7 @@ BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_exec_prefix	/
+%define		_libdir			/lib
 
 %description
 Resolvconf is a framework for keeping track of the system's
@@ -30,7 +31,6 @@ wykorzystującymi te informacje.
 %prep
 %setup -q
 %patch0 -p1
-%{__sed} -i -e s,readlink,resolvesymlink, etc/resolvconf/update.d/libc
 touch etc/resolvconf/resolv.conf.d/tail
 
 # cleanup backups after patching
@@ -38,7 +38,7 @@ find '(' -name '*~' -o -name '*.orig' ')' -print0 | xargs -0 -r -l512 rm -f
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{/etc/rc.d/init.d,%{_sysconfdir}/%{name}/run,%{_libdir}/%{name},%{_sbindir},%{_mandir}/{ru/,}man{5,8}}
+install -d $RPM_BUILD_ROOT{/etc/rc.d/init.d,%{_sysconfdir}/%{name}/run/interface,%{_libdir}/%{name},%{_sbindir},%{_mandir}/{ru/,}man{5,8}}
 
 cp -a etc/%{name}/* $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 install bin/resolvconf $RPM_BUILD_ROOT%{_sbindir}
@@ -46,6 +46,8 @@ install bin/list-records $RPM_BUILD_ROOT%{_libdir}/%{name}
 cp -a man/interface-order.5 $RPM_BUILD_ROOT%{_mandir}/man5
 cp -a man/resolvconf.8 $RPM_BUILD_ROOT%{_mandir}/man8
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
+touch $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/run/resolv.conf
+touch $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/run/enable-updates
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -62,6 +64,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_sysconfdir}/%{name}/update.d
 %dir %{_sysconfdir}/%{name}/update-libc.d
 %dir %{_sysconfdir}/%{name}/run
+%dir %{_sysconfdir}/%{name}/run/interface
+%ghost %{_sysconfdir}/%{name}/run/resolv.conf
+%ghost %{_sysconfdir}/%{name}/run/enable-updates
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/interface-order
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/resolv.conf.d/base
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/resolv.conf.d/head
