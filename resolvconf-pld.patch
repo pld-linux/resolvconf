@@ -1,6 +1,38 @@
---- ./etc/resolvconf/update.d/dnscache	2007-11-27 01:18:16.000000000 +0200
-+++ ./etc/resolvconf/update.d/dnscache	2006-07-28 18:05:55.000000000 +0300
-@@ -94,11 +94,11 @@
+--- resolvconf-1.42/README	2008-06-05 11:50:40.000000000 +0300
++++ resolvconf-1.42-pld/README	2008-11-24 21:18:08.000000000 +0200
+@@ -317,7 +317,7 @@
+ If you want to keep resolvconf installed but for some reason do not want
+ /etc/resolv.conf to be symlinked to /etc/resolvconf/run/resolv.conf then
+ you can disable the warning message by setting REPORT_ABSENT_SYMLINK=no
+-in /etc/default/resolvconf.
++in /etc/sysconfdir/resolvconf.
+ 
+ Order of entries in resolv.conf
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--- resolvconf-1.42/bin/resolvconf	2008-06-05 11:50:40.000000000 +0300
++++ resolvconf-1.42-pld/bin/resolvconf	2008-11-24 21:18:08.000000000 +0200
+@@ -92,5 +92,4 @@
+ 
+ [ -e "$ENABLE_UPDATES_FLAGFILE" ] || exit 0
+ 
+-exec run-parts "--arg=$CMD" ${IFACE:+--arg="$IFACE"} /etc/resolvconf/update.d
+-
++exec run-parts /etc/resolvconf/update.d "$CMD" ${IFACE:+"$IFACE"} 
+--- resolvconf-1.42/etc/resolvconf/update.d/bind	2008-06-05 11:50:40.000000000 +0300
++++ resolvconf-1.42-pld/etc/resolvconf/update.d/bind	2008-11-24 21:18:08.000000000 +0200
+@@ -96,7 +96,7 @@
+ 	rm -f "$TMP_FILE"
+ else
+ 	mv -f "$TMP_FILE" "$OPTS_FILE"
+-	[ -x /etc/init.d/bind9 ] && /etc/init.d/bind9 reload > /dev/null 2>&1 || :
+-	[ -x /etc/init.d/bind  ] && /etc/init.d/bind reload > /dev/null 2>&1 || :
++	[ -x /etc/rc.d/init.d/bind9 ] && /etc/rc.d/init.d/bind9 reload > /dev/null 2>&1 || :
++	[ -x /etc/rc.d/init.d/bind  ] && /etc/rc.d/init.d/bind reload > /dev/null 2>&1 || :
+ fi
+ 
+--- resolvconf-1.42/etc/resolvconf/update.d/dnscache	2008-06-10 19:17:46.000000000 +0300
++++ resolvconf-1.42-pld/etc/resolvconf/update.d/dnscache	2008-11-24 21:18:08.000000000 +0200
+@@ -98,11 +98,11 @@
  fi
  
  # svc is the daemontools service controller
@@ -14,8 +46,8 @@
  
  for CACHE in $CACHES ; do
  	cp "$TMPFILE" "$CACHE/root/servers/@"
---- ./etc/resolvconf/update.d/libc	2007-11-27 01:36:43.219430900 +0200
-+++ resolvconf-1.42-pld/etc/resolvconf/update.d/libc	2008-11-24 20:54:51.826224754 +0200
+--- resolvconf-1.42/etc/resolvconf/update.d/libc	2008-06-05 11:50:40.000000000 +0300
++++ resolvconf-1.42-pld/etc/resolvconf/update.d/libc	2008-11-24 21:18:08.000000000 +0200
 @@ -24,7 +24,7 @@
  TRUNCATE_NAMESERVER_LIST_AFTER_127=y
  
@@ -25,33 +57,37 @@
  
  ETC=/etc
  ETCRESOLVCONF="${ETC}/resolvconf"
-@@ -149,3 +149,3 @@
+@@ -37,7 +37,7 @@
+ 
+ report_warning() { echo "$0: Warning: $*" >&2 ; }
+ 
+-if [ ! -L ${ETC}/resolv.conf ] || [ ! "$(readlink ${ETC}/resolv.conf)" = "$DYNAMICRSLVCNFFILE" ] ; then
++if [ ! -L ${ETC}/resolv.conf ] || [ ! "$(resolvesymlink ${ETC}/resolv.conf)" = "$DYNAMICRSLVCNFFILE" ] ; then
+ 	case "$REPORT_ABSENT_SYMLINK" in
+ 		y|Y|yes|YES|Yes)
+ 			report_warning "${ETC}/resolv.conf is not a symbolic link to $DYNAMICRSLVCNFFILE"
+@@ -141,16 +141,16 @@
+ if \
+ 	[ "$NSCD_PIDFILE" ] \
+ 	&& [ -x /usr/sbin/nscd ] \
+-	&& [ -x /etc/init.d/nscd ] \
++	&& [ -x /etc/rc.d/init.d/nscd ] \
+ 	&& [ -s /etc/nscd.conf ] \
+ 	&& grep -q '[[:space:]]*enable-cache[[:space:]]\+hosts[[:space:]]\+yes' /etc/nscd.conf \
+ 	&& start-stop-daemon --stop --quiet --pidfile="$NSCD_PIDFILE" --exec /usr/sbin/nscd --retry=TERM/3/HUP/5 \
+ 	&& start-stop-daemon --stop --quiet --oknodo --exec /usr/sbin/nscd --retry=0/5
+ then
+ 	echo "Stopped Name Service Cache Daemon: nscd."
+-	/etc/init.d/nscd start && { sleep 0.1 ; NSCD_RESTARTED=yes ; }
++	/etc/rc.d/init.d/nscd start && { sleep 0.1 ; NSCD_RESTARTED=yes ; }
+ fi
+ 
  # Notify users of the resolver
 -exec run-parts ${NSCD_RESTARTED:+--arg="--nscd"} "${ETCRESOLVCONF}/update-libc.d"
 +exec run-parts "${ETCRESOLVCONF}/update-libc.d" ${NSCD_RESTARTED:+--nscd}
  
---- ./bin/resolvconf	2006-03-08 19:03:13.000000000 +0200
-+++ ./bin/resolvconf	2007-11-27 01:18:11.000000000 +0200
-@@ -92,5 +92,4 @@
- 
- [ -e "$ENABLE_UPDATES_FLAGFILE" ] || exit 0
- 
--exec run-parts "--arg=$CMD" ${IFACE:+--arg="$IFACE"} /etc/resolvconf/update.d
--
-+exec run-parts /etc/resolvconf/update.d "$CMD" ${IFACE:+"$IFACE"} 
---- resolvconf-1.42/README	2008-06-05 11:50:40.000000000 +0300
-+++ resolvconf-1.42-pld/README	2008-11-24 20:54:51.826224754 +0200
-@@ -317,7 +317,7 @@
- If you want to keep resolvconf installed but for some reason do not want
- /etc/resolv.conf to be symlinked to /etc/resolvconf/run/resolv.conf then
- you can disable the warning message by setting REPORT_ABSENT_SYMLINK=no
--in /etc/default/resolvconf.
-+in /etc/sysconfdir/resolvconf.
- 
- Order of entries in resolv.conf
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 --- resolvconf-1.42/man/resolvconf.8	2008-06-05 11:50:40.000000000 +0300
-+++ resolvconf-1.42-pld/man/resolvconf.8	2008-11-24 20:54:51.826224754 +0200
++++ resolvconf-1.42-pld/man/resolvconf.8	2008-11-24 21:18:08.000000000 +0200
 @@ -169,7 +169,7 @@
  \fB\-u\fR
  Just run the update scripts.
