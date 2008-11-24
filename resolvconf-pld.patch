@@ -14,14 +14,21 @@
  
  for CACHE in $CACHES ; do
  	cp "$TMPFILE" "$CACHE/root/servers/@"
---- ./etc/resolvconf/update.d/libc	2007-11-27 01:17:28.000000000 +0200
-+++ ./etc/resolvconf/update.d/libc	2007-11-27 01:36:43.219430900 +0200
-@@ -147,5 +147,5 @@
- fi
+--- ./etc/resolvconf/update.d/libc	2007-11-27 01:36:43.219430900 +0200
++++ resolvconf-1.42-pld/etc/resolvconf/update.d/libc	2008-11-24 20:54:51.826224754 +0200
+@@ -24,7 +24,7 @@
+ TRUNCATE_NAMESERVER_LIST_AFTER_127=y
  
+ # Default override
+-[ -r /etc/default/resolvconf ] && . /etc/default/resolvconf
++[ -r /etc/sysconfdir/resolvconf ] && . /etc/sysconfdir/resolvconf
+ 
+ ETC=/etc
+ ETCRESOLVCONF="${ETC}/resolvconf"
+@@ -149,3 +149,3 @@
  # Notify users of the resolver
 -exec run-parts ${NSCD_RESTARTED:+--arg="--nscd"} "${ETCRESOLVCONF}/update-libc.d"
-+exec run-parts "${ETCRESOLVCONF}/update-libc.d" "--nscd"
++exec run-parts "${ETCRESOLVCONF}/update-libc.d" ${NSCD_RESTARTED:+--nscd}
  
 --- ./bin/resolvconf	2006-03-08 19:03:13.000000000 +0200
 +++ ./bin/resolvconf	2007-11-27 01:18:11.000000000 +0200
@@ -32,3 +39,34 @@
 -exec run-parts "--arg=$CMD" ${IFACE:+--arg="$IFACE"} /etc/resolvconf/update.d
 -
 +exec run-parts /etc/resolvconf/update.d "$CMD" ${IFACE:+"$IFACE"} 
+--- resolvconf-1.42/README	2008-06-05 11:50:40.000000000 +0300
++++ resolvconf-1.42-pld/README	2008-11-24 20:54:51.826224754 +0200
+@@ -317,7 +317,7 @@
+ If you want to keep resolvconf installed but for some reason do not want
+ /etc/resolv.conf to be symlinked to /etc/resolvconf/run/resolv.conf then
+ you can disable the warning message by setting REPORT_ABSENT_SYMLINK=no
+-in /etc/default/resolvconf.
++in /etc/sysconfdir/resolvconf.
+ 
+ Order of entries in resolv.conf
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--- resolvconf-1.42/man/resolvconf.8	2008-06-05 11:50:40.000000000 +0300
++++ resolvconf-1.42-pld/man/resolvconf.8	2008-11-24 20:54:51.826224754 +0200
+@@ -169,7 +169,7 @@
+ \fB\-u\fR
+ Just run the update scripts.
+ .SH ENVIRONMENT VARIABLES
+-The following variables can be set in /etc/default/resolvconf.
++The following variables can be set in /etc/sysconfdir/resolvconf.
+ .TP
+ .B REPORT_ABSENT_SYMLINK
+ If set to "yes" then
+@@ -205,7 +205,7 @@
+ The default is "yes".
+ .SH FILES
+ .TP
+-.I /etc/default/resolvconf
++.I /etc/sysconfdir/resolvconf
+ See the ENVIRONMENT VARIABLES section.
+ .I /etc/resolvconf/run
+ This is either a directory where nameserver information can be stored
