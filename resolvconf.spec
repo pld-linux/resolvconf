@@ -8,6 +8,7 @@ Group:		Base
 Source0:	ftp://ftp.debian.org/debian/pool/main/r/resolvconf/%{name}_%{version}.tar.gz
 # Source0-md5:	205919a6754c93f61c76cd8f851c81b3
 Source1:	%{name}.init
+Source2:	%{name}.sysconfig
 Patch0:		%{name}-pld.patch
 Requires:	rc-scripts
 BuildArch:	noarch
@@ -38,7 +39,7 @@ find '(' -name '*~' -o -name '*.orig' ')' -print0 | xargs -0 -r -l512 rm -f
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{/etc/rc.d/init.d,%{_sysconfdir}/%{name}/run/interface,%{_libdir}/%{name},%{_sbindir},%{_mandir}/{ru/,}man{5,8}}
+install -d $RPM_BUILD_ROOT{/etc/{sysconfig,rc.d/init.d},%{_sysconfdir}/%{name}/run/interface,%{_libdir}/%{name},%{_sbindir},%{_mandir}/{ru/,}man{5,8}}
 
 cp -a etc/%{name}/* $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 install bin/resolvconf $RPM_BUILD_ROOT%{_sbindir}
@@ -46,6 +47,7 @@ install bin/list-records $RPM_BUILD_ROOT%{_libdir}/%{name}
 cp -a man/interface-order.5 $RPM_BUILD_ROOT%{_mandir}/man5
 cp -a man/resolvconf.8 $RPM_BUILD_ROOT%{_mandir}/man8
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
+install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 touch $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/run/resolv.conf
 touch $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/run/enable-updates
 
@@ -57,6 +59,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc README
 %attr(755,root,root) %{_sbindir}/resolvconf
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
 %dir %{_libdir}/resolvconf
 %attr(755,root,root) %{_libdir}/resolvconf/list-records
 %dir %{_sysconfdir}/%{name}
