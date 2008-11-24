@@ -5,7 +5,7 @@
  /etc/resolv.conf to be symlinked to /etc/resolvconf/run/resolv.conf then
  you can disable the warning message by setting REPORT_ABSENT_SYMLINK=no
 -in /etc/default/resolvconf.
-+in /etc/sysconfdir/resolvconf.
++in /etc/sysconfig/resolvconf.
  
  Order of entries in resolv.conf
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -53,7 +53,7 @@
  
  # Default override
 -[ -r /etc/default/resolvconf ] && . /etc/default/resolvconf
-+[ -r /etc/sysconfdir/resolvconf ] && . /etc/sysconfdir/resolvconf
++[ -r /etc/sysconfig/resolvconf ] && . /etc/sysconfig/resolvconf
  
  ETC=/etc
  ETCRESOLVCONF="${ETC}/resolvconf"
@@ -93,7 +93,7 @@
  Just run the update scripts.
  .SH ENVIRONMENT VARIABLES
 -The following variables can be set in /etc/default/resolvconf.
-+The following variables can be set in /etc/sysconfdir/resolvconf.
++The following variables can be set in /etc/sysconfig/resolvconf.
  .TP
  .B REPORT_ABSENT_SYMLINK
  If set to "yes" then
@@ -102,7 +102,7 @@
  .SH FILES
  .TP
 -.I /etc/default/resolvconf
-+.I /etc/sysconfdir/resolvconf
++.I /etc/sysconfig/resolvconf
  See the ENVIRONMENT VARIABLES section.
  .I /etc/resolvconf/run
  This is either a directory where nameserver information can be stored
