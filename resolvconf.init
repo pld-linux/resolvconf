@@ -17,6 +17,9 @@ ENABLE_UPDATES_FLAGFILE="${RUN_DIR}/enable-updates"
 
 . /etc/rc.d/init.d/functions
 
+# need resolv.conf created with sane permission
+umask 022
+
 update() {
 	[ -e "$ENABLE_UPDATES_FLAGFILE" ] || return 0
 	cd "$IFACE_DIR"
@@ -38,7 +41,6 @@ start)
 	# If you want to update the resolv.conf file then use "reload".
 	# On package upgrade, don't run this.
 	show "Setting up resolvconf"
-	umask 022
 	if [ ! -d "$RUN_DIR" ] ; then
 		if [ ! -L "$RUN_DIR" ]; then
 			fail
