@@ -1,0 +1,10 @@
+# See resolvconf(8) for description of this file
+#
+# Set REPORT_ABSENT_SYMLINK=no to inhibit reports that
+# /etc/resolv.conf is not a symbolic link
+# Default value
+#REPORT_ABSENT_SYMLINK=yes
+
+# If  set  to "yes" then the update.d/libc script will include no more
+# nameserver addresses after the first address that starts with "127." 
+#TRUNCATE_NAMESERVER_LIST_AFTER_127=yes
