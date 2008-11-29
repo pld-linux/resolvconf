@@ -36,7 +36,7 @@ disable_updates() {
 }
 
 case "$1" in
-start)
+  start)
 	# The "start" method should _only_ be used at boot time.
 	# If you want to update the resolv.conf file then use "reload".
 	# On package upgrade, don't run this.
@@ -57,7 +57,7 @@ start)
 		# Create directory at the target
 		if ! mkdir "$RUN_CANONICALDIR"; then
 			fail
-		   	show "error creating directory $RUN_CANONICALDIR"
+		 	show "error creating directory $RUN_CANONICALDIR"
 			exit 1
 		fi
 	fi
@@ -87,7 +87,7 @@ start)
 		fail
 	fi
 	;;
-stop)
+  stop)
 	# The "stop" method should only be used at shutdown time.
 	show "Stopping resolvconf"
 	disable_updates
@@ -98,11 +98,11 @@ stop)
 		fail
 	fi
 	;;
-restart)
+  restart|try-restart)
 	show "Restarting resolvconf"
 	if [ ! -d "${RUN_DIR}/interface" ]; then
 		fail
-	   	show "${RUN_DIR}/interface is not a directory"
+	 	show "${RUN_DIR}/interface is not a directory"
 		exit 1
 	fi
 	if ! enable_updates; then
@@ -118,26 +118,25 @@ restart)
 		fail
 	fi
 	;;
-reload|force-reload)
+  reload|force-reload)
 	# Do it silently
 	if [ ! -d "${RUN_DIR}/interface" ]; then
 		show "${RUN_DIR}/interface is not a directory"
-	   	exit 1
+	 	exit 1
 	fi
 	update
 	exit $?
 	;;
-enable-updates)
+  enable-updates)
 	enable_updates
 	exit $?
 	;;
-disable-updates)
+  disable-updates)
 	disable_updates
 	exit $?
 	;;
-*)
-	msg_usage "$0 {start|stop|reload|restart|force-reload|enable-updates|disable-updates}"
+  *)
+	msg_usage "$0 {start|stop|restart|try-restart|reload|force-reload|enable-updates|disable-updates}"
 	exit 3
 	;;
 esac
-
