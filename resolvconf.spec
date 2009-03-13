@@ -1,12 +1,12 @@
 Summary:	Nameserver information handler
 Summary(pl.UTF-8):	Program obsługujący informacje o serwerach nazw
 Name:		resolvconf
-Version:	1.42
-Release:	2
+Version:	1.43
+Release:	1
 License:	GPL v2
 Group:		Base
 Source0:	ftp://ftp.debian.org/debian/pool/main/r/resolvconf/%{name}_%{version}.tar.gz
-# Source0-md5:	205919a6754c93f61c76cd8f851c81b3
+# Source0-md5:	15faef2aba7b99782f3b0b8b5d30f80a
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Patch0:		%{name}-pld.patch
