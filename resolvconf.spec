@@ -2,7 +2,7 @@ Summary:	Nameserver information handler
 Summary(pl.UTF-8):	Program obsługujący informacje o serwerach nazw
 Name:		resolvconf
 Version:	1.43
-Release:	1
+Release:	2
 License:	GPL v2
 Group:		Base
 Source0:	ftp://ftp.debian.org/debian/pool/main/r/resolvconf/%{name}_%{version}.tar.gz
@@ -10,6 +10,7 @@ Source0:	ftp://ftp.debian.org/debian/pool/main/r/resolvconf/%{name}_%{version}.t
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Patch0:		%{name}-pld.patch
+Patch1:		resolv.conf-mode.patch
 Requires:	rc-scripts
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -32,6 +33,7 @@ wykorzystującymi te informacje.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 touch etc/resolvconf/resolv.conf.d/tail
 
 # cleanup backups after patching
@@ -42,12 +44,12 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{/etc/{sysconfig,rc.d/init.d},%{_sysconfdir}/%{name}/run/interface,%{_libdir}/%{name},%{_sbindir},%{_mandir}/{ru/,}man{5,8}}
 
 cp -a etc/%{name}/* $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
-install bin/resolvconf $RPM_BUILD_ROOT%{_sbindir}
-install bin/list-records $RPM_BUILD_ROOT%{_libdir}/%{name}
+install -p bin/resolvconf $RPM_BUILD_ROOT%{_sbindir}
+install -p bin/list-records $RPM_BUILD_ROOT%{_libdir}/%{name}
 cp -a man/interface-order.5 $RPM_BUILD_ROOT%{_mandir}/man5
 cp -a man/resolvconf.8 $RPM_BUILD_ROOT%{_mandir}/man8
-install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
-install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
+install -p %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
+install -p %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 touch $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/run/resolv.conf
 touch $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/run/enable-updates
 

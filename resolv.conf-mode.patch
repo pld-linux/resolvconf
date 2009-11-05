@@ -1,0 +1,10 @@
+--- resolvconf-1.43/etc/resolvconf/update.d/libc~	2009-11-05 19:30:31.554926706 +0200
++++ resolvconf-1.43/etc/resolvconf/update.d/libc	2009-11-05 19:30:44.748256920 +0200
+@@ -131,6 +131,7 @@
+ fi
+ 
+ # The file has changed
++chmod 644 "$TMPFILE"
+ mv -f "$TMPFILE" "$DYNAMICRSLVCNFFILE"
+ 
+ # Restart nscd
