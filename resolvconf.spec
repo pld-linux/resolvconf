@@ -2,7 +2,7 @@ Summary:	Nameserver information handler
 Summary(pl.UTF-8):	Program obsługujący informacje o serwerach nazw
 Name:		resolvconf
 Version:	1.43
-Release:	3
+Release:	4
 License:	GPL v2
 Group:		Base
 Source0:	ftp://ftp.debian.org/debian/pool/main/r/resolvconf/%{name}_%{version}.tar.gz
@@ -45,8 +45,8 @@ find '(' -name '*~' -o -name '*.orig' ')' -print0 | xargs -0 -r -l512 rm -f
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{/etc/{sysconfig,rc.d/init.d},%{_sysconfdir}/%{name}/run/interface,%{_libdir}/%{name},%{_sbindir},%{_mandir}/{ru/,}man{5,8}}
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/dhcp-client-enter-hooks.d
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/dhcp-client-exit-hooks.d
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/dhclient-enter-hooks.d
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/dhclient-exit-hooks.d
 
 cp -a etc/%{name}/* $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 install -p bin/resolvconf $RPM_BUILD_ROOT%{_sbindir}
@@ -55,8 +55,8 @@ cp -a man/interface-order.5 $RPM_BUILD_ROOT%{_mandir}/man5
 cp -a man/resolvconf.8 $RPM_BUILD_ROOT%{_mandir}/man8
 install -p %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install -p %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
-install %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/dhcp-client-enter-hooks.d/resolvconf
-install %{SOURCE4} $RPM_BUILD_ROOT%{_sysconfdir}/dhcp-client-exit-hooks.d/resolvconf
+install %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/dhclient-enter-hooks.d/resolvconf
+install %{SOURCE4} $RPM_BUILD_ROOT%{_sysconfdir}/dhclient-exit-hooks.d/resolvconf
 touch $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/run/resolv.conf
 touch $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/run/enable-updates
 
@@ -83,8 +83,8 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/resolv.conf.d/base
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/resolv.conf.d/head
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/resolv.conf.d/tail
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/dhcp-client-enter-hooks.d/resolvconf
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/dhcp-client-exit-hooks.d/resolvconf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/dhclient-enter-hooks.d/resolvconf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/dhclient-exit-hooks.d/resolvconf
 %attr(755,root,root) %{_sysconfdir}/%{name}/update.d/bind
 %attr(755,root,root) %{_sysconfdir}/%{name}/update.d/dnscache
 %attr(755,root,root) %{_sysconfdir}/%{name}/update.d/libc
