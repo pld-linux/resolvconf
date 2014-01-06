@@ -2,7 +2,7 @@ Summary:	Nameserver information handler
 Summary(pl.UTF-8):	Program obsługujący informacje o serwerach nazw
 Name:		resolvconf
 Version:	1.43
-Release:	4
+Release:	5
 License:	GPL v2
 Group:		Base
 Source0:	ftp://ftp.debian.org/debian/pool/main/r/resolvconf/%{name}_%{version}.tar.gz
@@ -14,7 +14,7 @@ Source4:	%{name}-dhclient-exit-hook.sh
 Patch0:		%{name}-pld.patch
 Patch1:		resolv.conf-mode.patch
 Requires:	dhcp-client-dirs
-Requires:	rc-scripts
+Requires:	rc-scripts >= 0.4.8
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 

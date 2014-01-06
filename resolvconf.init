@@ -79,7 +79,7 @@ case "$1" in
 		show "could not enable updates"
 		exit 1
 	fi
-	update -i
+	update --arg=-i
 	RETVAL=$?
 	if [ $RETVAL = 0 ]; then
 		ok

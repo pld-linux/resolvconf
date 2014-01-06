@@ -9,15 +9,6 @@
  
  Order of entries in resolv.conf
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
---- resolvconf-1.42/bin/resolvconf	2008-06-05 11:50:40.000000000 +0300
-+++ resolvconf-1.42-pld/bin/resolvconf	2008-11-24 21:18:08.000000000 +0200
-@@ -92,5 +92,4 @@
- 
- [ -e "$ENABLE_UPDATES_FLAGFILE" ] || exit 0
- 
--exec run-parts "--arg=$CMD" ${IFACE:+--arg="$IFACE"} /etc/resolvconf/update.d
--
-+exec run-parts /etc/resolvconf/update.d "$CMD" ${IFACE:+"$IFACE"} 
 --- resolvconf-1.42/etc/resolvconf/update.d/bind	2008-06-05 11:50:40.000000000 +0300
 +++ resolvconf-1.42-pld/etc/resolvconf/update.d/bind	2008-11-24 21:18:08.000000000 +0200
 @@ -96,7 +96,7 @@
@@ -83,8 +74,7 @@
  fi
  
  # Notify users of the resolver
--exec run-parts ${NSCD_RESTARTED:+--arg="--nscd"} "${ETCRESOLVCONF}/update-libc.d"
-+exec run-parts "${ETCRESOLVCONF}/update-libc.d" ${NSCD_RESTARTED:+--nscd}
+ exec run-parts ${NSCD_RESTARTED:+--arg="--nscd"} "${ETCRESOLVCONF}/update-libc.d"
  
 --- resolvconf-1.42/man/resolvconf.8	2008-06-05 11:50:40.000000000 +0300
 +++ resolvconf-1.42-pld/man/resolvconf.8	2008-11-24 21:18:08.000000000 +0200
