@@ -5,7 +5,7 @@ Version:	1.43
 Release:	5
 License:	GPL v2
 Group:		Base
-Source0:	ftp://ftp.debian.org/debian/pool/main/r/resolvconf/%{name}_%{version}.tar.gz
+Source0:	http://ftp.debian.org/debian/pool/main/r/resolvconf/%{name}_%{version}.tar.gz
 # Source0-md5:	15faef2aba7b99782f3b0b8b5d30f80a
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
